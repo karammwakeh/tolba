@@ -1,0 +1,353 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base reset & root tokens ─────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  :root {
+    --c-bg:        #050A14;
+    --c-surface:   #0B1120;
+    --c-card:      #0F1A2B;
+    --c-elevated:  #1C2A3A;
+    --c-border:    #1E3048;
+    --c-muted:     #8899AA;
+    --c-primary:   #F0F4F8;
+    --c-accent:    #00E5FF;
+    --c-accentDim: #00B8CC;
+
+    /* Fluid spacing scale — used in templates */
+    --section-y:  clamp(5rem, 10vw, 8rem);
+    --container-x: clamp(1.5rem, 5vw, 6rem);
+
+    /* Timeline */
+    --timeline-line: rgba(30, 48, 72, 0.7);
+    --timeline-active: #00E5FF;
+
+    /* Form */
+    --input-bg: rgba(15, 26, 43, 0.6);
+    --input-border: rgba(30, 48, 72, 0.9);
+    --input-focus: rgba(0, 229, 255, 0.35);
+
+    /* Page transition */
+    --transition-page: 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--c-bg);
+    color: var(--c-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    overflow-x: hidden;
+    /* Prevent layout shift during page transitions */
+    min-height: 100vh;
+  }
+
+  /* Prevent scroll during page-exit animation */
+  body[data-transitioning="true"] {
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  ::selection {
+    background: rgba(0, 229, 255, 0.18);
+    color: #00E5FF;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgba(0, 229, 255, 0.5);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--c-bg); }
+  ::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(0, 229, 255, 0.3); }
+}
+
+/* ── Utility classes ──────────────────────────────────────── */
+@layer utilities {
+
+  /* Gradient text — accent only */
+  .text-gradient-cyan {
+    background: linear-gradient(135deg, #00E5FF 0%, #00B8CC 55%, #007A8A 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Glow effects */
+  .glow-cyan    { box-shadow: 0 0 28px rgba(0,229,255,0.18), 0 0 56px rgba(0,229,255,0.07); }
+  .glow-cyan-sm { box-shadow: 0 0 14px rgba(0,229,255,0.14), 0 0 28px rgba(0,229,255,0.06); }
+  .glow-cyan-xs { box-shadow: 0 0  8px rgba(0,229,255,0.12); }
+
+  /* Glassmorphism presets */
+  .glass {
+    background: rgba(11, 17, 32, 0.78);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  }
+  .glass-card {
+    background: rgba(15, 26, 43, 0.55);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  }
+  .glass-light {
+    background: rgba(240, 244, 248, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Noise overlay — applied with ::after on parent */
+  .noise-overlay {
+    position: relative;
+    isolation: isolate;
+  }
+  .noise-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    opacity: 0.45;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 1;
+  }
+
+  /* Section grid lines — engineering aesthetic */
+  .grid-lines {
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 64px 64px;
+  }
+
+  /* Horizontal accent dividers */
+  .divider-cyan {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.25), transparent);
+  }
+  .divider-subtle {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(30,48,72,0.8), transparent);
+  }
+
+  /* Fluid container */
+  .container-fluid {
+    max-width: 80rem;  /* 1280px */
+    margin-inline: auto;
+    padding-inline: var(--container-x);
+  }
+
+  /* Section vertical rhythm */
+  .section-y { padding-block: var(--section-y); }
+
+  /* Eyebrow / overline label */
+  .eyebrow {
+    font-size: 0.6875rem;     /* 11px */
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    line-height: 1;
+  }
+
+  /* Floating label form group */
+  .float-label-group { position: relative; }
+  .float-label-input {
+    width: 100%;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0.75rem;
+    padding: 1.375rem 1rem 0.625rem;
+    font-size: 0.9375rem;
+    color: var(--c-primary);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    font-family: inherit;
+    resize: none;
+  }
+  .float-label-input::placeholder { color: transparent; }
+  .float-label-input:focus {
+    border-color: rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.08);
+  }
+  .float-label-input:focus ~ label,
+  .float-label-input:not(:placeholder-shown) ~ label {
+    transform: translateY(-0.75rem) scale(0.75);
+    color: var(--c-accent);
+    letter-spacing: 0.04em;
+  }
+  .float-label {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9375rem;
+    color: var(--c-muted);
+    pointer-events: none;
+    transition: transform 0.2s ease, color 0.2s ease, letter-spacing 0.2s ease;
+    transform-origin: left center;
+  }
+  /* textarea label sits at top */
+  .float-label-textarea ~ .float-label { top: 1.375rem; transform: none; }
+  .float-label-textarea:focus ~ .float-label,
+  .float-label-textarea:not(:placeholder-shown) ~ .float-label {
+    transform: translateY(-0.5rem) scale(0.75);
+    color: var(--c-accent);
+  }
+
+  /* Timeline scroll-reveal helpers */
+  .timeline-line {
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--timeline-line) 10%,
+      var(--timeline-line) 90%,
+      transparent 100%
+    );
+  }
+  .timeline-dot-active {
+    background: var(--timeline-active);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5), 0 0 24px rgba(0, 229, 255, 0.2);
+  }
+
+  /* Page transition overlay */
+  .page-wipe {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    background: var(--c-bg);
+  }
+
+  /* Z-layout alternating margin helpers */
+  .z-text-left  { order: 1; }
+  .z-visual-right { order: 2; }
+  .z-text-right  { order: 2; }
+  .z-visual-left { order: 1; }
+
+  @media (max-width: 1023px) {
+    .z-text-right,
+    .z-visual-left { order: unset; }
+  }
+
+  /* Clip paths for visual accent shapes */
+  .clip-hex {
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  }
+  .clip-corner {
+    clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 24px, 100% 100%, 0 100%);
+  }
+
+  /* Animated underline for links */
+  .animated-underline {
+    background-image: linear-gradient(90deg, #00E5FF, #00E5FF);
+    background-size: 0% 1px;
+    background-repeat: no-repeat;
+    background-position: left bottom;
+    transition: background-size 0.25s ease;
+  }
+  .animated-underline:hover { background-size: 100% 1px; }
+
+  /* Tabular nums for counters */
+  .tabular { font-variant-numeric: tabular-nums; }
+}
+
+/* ── Component classes ────────────────────────────────────── */
+@layer components {
+  /* Primary CTA — one per section, accent fill */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background: var(--c-accent);
+    color: #050A14;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    border-radius: 0.625rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.15s ease;
+    text-decoration: none;
+  }
+  .btn-primary:hover {
+    background-color: var(--c-accentDim);
+    transform: scale(0.975);
+  }
+  .btn-primary:active { transform: scale(0.96); }
+
+  /* Secondary CTA — ghost with accent border */
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8125rem 2rem;
+    background: transparent;
+    color: var(--c-accent);
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 0.625rem;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    text-decoration: none;
+  }
+  .btn-ghost:hover {
+    background-color: rgba(0, 229, 255, 0.06);
+    border-color: rgba(0, 229, 255, 0.5);
+    transform: scale(0.975);
+  }
+
+  /* Section header block — reusable across pages */
+  .section-header { margin-bottom: 3.5rem; }
+  .section-header h2 {
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 800;
+    letter-spacing: -0.028em;
+    line-height: 1.05;
+    color: var(--c-primary);
+    margin-top: 0.75rem;
+  }
+  .section-header p {
+    font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+    color: var(--c-muted);
+    line-height: 1.75;
+    max-width: 36rem;
+    margin-top: 1rem;
+  }
+
+  /* Bento card base */
+  .bento-base {
+    border-radius: 1rem;
+    border: 1px solid rgba(30, 48, 72, 0.8);
+    background: #0F1A2B;
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+  }
+  .bento-base:hover {
+    border-color: rgba(0, 229, 255, 0.22);
+    background-color: #121F32;
+    transform: translateY(-2px);
+  }
+
+  /* Feature visual placeholder */
+  .feature-visual {
+    border-radius: 1.25rem;
+    border: 1px solid rgba(30, 48, 72, 0.6);
+    background: linear-gradient(145deg, #0A1628 0%, #080E1C 100%);
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 4/3;
+  }
+}
